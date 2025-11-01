@@ -1,0 +1,68 @@
+{
+  "name": "@pipeline/tests",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Comprehensive test suite for the pipeline challenge project",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "test:ci": "jest --ci --coverage --maxWorkers=2"
+  },
+  "dependencies": {
+    "@pipeline/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.3.1",
+    "@types/jest": "^29.5.5",
+    "@types/node": "^18.18.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2",
+    "@clickhouse/client": "^0.2.2",
+    "kafkajs": "^2.2.4",
+    "meilisearch": "^0.35.0",
+    "testcontainers": "^10.2.1",
+    "winston": "^3.11.0",
+    "pino": "^8.16.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.ts",
+      "**/?(*.)+(spec|test).ts"
+    ],
+    "collectCoverageFrom": [
+      "../apps/**/*.ts",
+      "../packages/**/*.ts",
+      "!**/*.d.ts",
+      "!**/node_modules/**",
+      "!**/dist/**",
+      "!**/*.config.ts",
+      "!**/index.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 85,
+        "lines": 85,
+        "statements": 85
+      }
+    },
+    "coverageDirectory": "<rootDir>/coverage",
+    "moduleNameMapper": {
+      "^@pipeline/shared$": "<rootDir>/../packages/shared/src/index.ts",
+      "^@/(.*)$": "<rootDir>/../apps/web/src/$1"
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/helpers/setup.ts"
+    ],
+    "testTimeout": 30000
+  }
+}

@@ -1,0 +1,311 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/forms";
+@source "../**/*.{js,ts,jsx,tsx,mdx}";
+@source "../../node_modules/@tremor/**/*.{js,ts,jsx,tsx}";
+
+/* Dark mode variant to match Tremor's docs */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tremor animation tokens and keyframes (per guide) */
+@theme {
+  /* Animation tokens */
+  --animate-hide: hide 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-down-and-fade: slideDownAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-left-and-fade: slideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up-and-fade: slideUpAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-right-and-fade: slideRightAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-accordion-open: accordionOpen 150ms cubic-bezier(0.87, 0, 0.13, 1);
+  --animate-accordion-close: accordionClose 150ms cubic-bezier(0.87, 0, 0.13, 1);
+  --animate-dialog-overlay-show: dialogOverlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dialog-content-show: dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-drawer-slide-left-and-fade: drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-drawer-slide-right-and-fade: drawerSlideRightAndFade 150ms ease-in;
+
+  /* Keyframes */
+  @keyframes hide {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes slideDownAndFade {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slideLeftAndFade {
+    from {
+      opacity: 0;
+      transform: translateX(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes slideUpAndFade {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slideRightAndFade {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes accordionOpen {
+    from {
+      height: 0px;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordionClose {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0px;
+    }
+  }
+  @keyframes dialogOverlayShow {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes dialogContentShow {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -45%) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+  @keyframes drawerSlideLeftAndFade {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  @keyframes drawerSlideRightAndFade {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Base tweaks */
+html {
+  /* We still apply antialiasing in case the className isn't set */
+  /* Recommended to also add `antialiased dark:bg-gray-950` on the <html> element */
+  @apply scroll-smooth antialiased;
+}
+
+body {
+  @apply text-gray-900 dark:text-gray-100;
+  font-feature-settings:
+    'rlig' 1,
+    'calt' 1;
+}
+
+/* Focus ring styling */
+*:focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Button baseline */
+button {
+  @apply focus:outline-none;
+}
+
+/* Native select focus baseline (Tremor components mostly use Radix Select) */
+/* Form controls (inputs, selects, textareas) */
+input[type='text'],
+input[type='search'],
+input[type='number'],
+input[type='email'],
+input[type='password'],
+textarea,
+select {
+  @apply bg-white text-gray-900 placeholder-gray-400 border-gray-300 focus:ring-2 focus:ring-blue-500;
+  @apply dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500 dark:border-gray-700;
+}
+
+/* Components */
+.custom-scrollbar::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded hover:bg-gray-400;
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-shadow duration-200 hover:shadow-lg;
+}
+
+/* Stat card animation */
+.stat-card {
+  @apply transition-all duration-200 hover:scale-[1.02];
+}
+
+/* Utilities */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Text gradient utility */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-600;
+}
+
+/* Truncate with tooltip support */
+.truncate-tooltip {
+  @apply truncate hover:overflow-visible hover:whitespace-normal;
+}
+
+/* Tremor overrides for better consistency */
+.tremor-Card-root {
+  @apply shadow-sm hover:shadow-md transition-shadow duration-200 dark:bg-gray-900 dark:border-gray-800;
+}
+
+.tremor-Title-root {
+  @apply text-gray-900 dark:text-gray-50 font-semibold;
+}
+
+.tremor-Text-root {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+.tremor-Metric-root {
+  @apply text-gray-900 dark:text-gray-100 font-semibold;
+}
+
+/* Better table styling */
+.tremor-Table-root {
+  @apply border-gray-200 dark:border-gray-800;
+}
+
+.tremor-TableHeaderCell-root {
+  @apply bg-gray-50 dark:bg-gray-900/40 font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider text-xs;
+}
+
+.tremor-TableRow-root {
+  @apply hover:bg-gray-50 dark:hover:bg-gray-900/60 transition-colors duration-150;
+}
+
+.tremor-TableCell-root {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+/* Badge improvements */
+.tremor-Badge-root {
+  @apply font-medium dark:text-gray-100;
+}
+
+/* Button improvements */
+.tremor-Button-root {
+  @apply transition-all duration-200 font-medium dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700;
+}
+
+.tremor-Button-root:hover {
+  @apply scale-[1.02];
+}
+
+/* Chart improvements */
+.tremor-AreaChart-root,
+.tremor-BarChart-root,
+.tremor-DonutChart-root {
+  @apply rounded-lg;
+}
+
+/* Recharts dark-mode adjustments */
+.dark .recharts-cartesian-grid line {
+  stroke: #374151; /* gray-700 */
+}
+
+.dark .recharts-text tspan {
+  fill: #d1d5db; /* gray-300 */
+}
+
+.dark .recharts-legend-item-text {
+  color: #e5e7eb; /* gray-200 */
+}
+
+.dark .recharts-default-legend {
+  color: #e5e7eb; /* gray-200 */
+}
+
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #374151; /* gray-700 */
+  color: #e5e7eb; /* gray-200 */
+}
+
+/* Tremor Select & Dropdown overrides */
+.tremor-SelectItem-root,
+.tremor-DropdownMenuItem-root {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-0 hover:bg-gray-50 dark:hover:bg-gray-800;
+}
+
+.tremor-SelectContent-root,
+.tremor-DropdownMenuContent-root {
+  @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md shadow-lg;
+}
+
+/* Fallback for Radix Select roles to ensure solid background and no borders */
+[role='listbox'] {
+  @apply bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-md shadow-lg;
+}
+
+[role='option'] {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-0;
+}
