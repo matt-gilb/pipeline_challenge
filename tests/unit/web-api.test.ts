@@ -1,12 +1,6 @@
 import { z } from 'zod';
+import { MockClickHouseClient, MockMeilisearchClient } from '../helpers/mocks';
 import {
-  MockClickHouseClient,
-  MockMeilisearchClient,
-  MockMeilisearchIndex,
-} from '../helpers/mocks';
-import {
-  SAMPLE_ACCOUNT_ACTIVITY_EVENT,
-  SAMPLE_API_REQUEST_EVENT,
   SAMPLE_EMAIL_EVENT,
   createAccountActivityEvent,
   createApiRequestEvent,

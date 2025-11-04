@@ -1,5 +1,5 @@
 import { validateEvent } from '../../packages/shared/src/validate';
-import { Event, EventSchema } from '@pipeline/shared';
+// removed unused imports from @pipeline/shared
 import {
   SAMPLE_ACCOUNT_ACTIVITY_EVENT,
   SAMPLE_API_REQUEST_EVENT,
@@ -168,7 +168,7 @@ describe('validateEvent', () => {
       };
 
       const result = validateEvent(eventWithReason);
-      expect(result.failureReason).toBe('Invalid credentials');
+      expect((result as any).failureReason).toBe('Invalid credentials');
     });
   });
 
@@ -237,7 +237,7 @@ describe('validateEvent', () => {
         };
 
         const result = validateEvent(event);
-        expect(result.method).toBe(method);
+        expect((result as any).method).toBe(method);
       });
     });
 
@@ -251,7 +251,7 @@ describe('validateEvent', () => {
         };
 
         const result = validateEvent(event);
-        expect(result.statusCode).toBe(statusCode);
+        expect((result as any).statusCode).toBe(statusCode);
       });
     });
   });
@@ -285,7 +285,7 @@ describe('validateEvent', () => {
         };
 
         const result = validateEvent(event);
-        expect(result.bounceType).toBe(bounceType);
+        expect((result as any).bounceType).toBe(bounceType);
       });
     });
 
@@ -296,7 +296,7 @@ describe('validateEvent', () => {
       };
 
       const result = validateEvent(eventWithMessage);
-      expect(result.messageId).toBe('123e4567-e89b-12d3-a456-426614174999');
+      expect((result as any).messageId).toBe('123e4567-e89b-12d3-a456-426614174999');
     });
 
     it('should accept event without messageId', () => {
@@ -306,7 +306,7 @@ describe('validateEvent', () => {
       };
 
       const result = validateEvent(eventWithoutMessage);
-      expect(result.messageId).toBeUndefined();
+      expect((result as any).messageId).toBeUndefined();
     });
 
     it('should reject invalid messageId format', () => {
@@ -325,7 +325,7 @@ describe('validateEvent', () => {
       };
 
       const result = validateEvent(eventWithReason);
-      expect(result.failureReason).toBe('Mailbox full');
+      expect((result as any).failureReason).toBe('Mailbox full');
     });
   });
 
@@ -383,7 +383,7 @@ describe('validateEvent', () => {
       };
 
       const result = validateEvent(event);
-      expect(result.userAgent).toHaveLength(10000);
+      expect((result as any).userAgent).toHaveLength(10000);
     });
   });
 });

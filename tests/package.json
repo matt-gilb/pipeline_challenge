@@ -26,7 +26,8 @@
     "meilisearch": "^0.35.0",
     "testcontainers": "^10.2.1",
     "winston": "^3.11.0",
-    "pino": "^8.16.0"
+    "pino": "^8.16.0",
+    "zod": "^3.24.1"
   },
   "jest": {
     "preset": "ts-jest",

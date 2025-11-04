@@ -268,7 +268,7 @@ export class MockMeilisearchClient {
     return this.indexes.get(indexName)!;
   }
 
-  async createIndex(indexName: string, options?: { primaryKey?: string }) {
+  async createIndex(indexName: string, _options?: { primaryKey?: string }) {
     const index = new MockMeilisearchIndex(indexName);
     this.indexes.set(indexName, index);
     return { taskUid: 0, indexUid: indexName };

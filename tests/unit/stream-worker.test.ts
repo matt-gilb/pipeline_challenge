@@ -1,10 +1,5 @@
 import { validateEvent } from '../../packages/shared/src/validate';
-import {
-  MockKafkaConsumer,
-  MockClickHouseClient,
-  MockMeilisearchClient,
-  waitFor,
-} from '../helpers/mocks';
+import { MockKafkaConsumer, MockClickHouseClient, MockMeilisearchClient } from '../helpers/mocks';
 import {
   SAMPLE_ACCOUNT_ACTIVITY_EVENT,
   SAMPLE_API_REQUEST_EVENT,
@@ -254,11 +249,7 @@ describe('Stream Worker', () => {
 
   describe('Batch Processing', () => {
     it('should process multiple events', async () => {
-      const events = [
-        createAccountActivityEvent(),
-        createApiRequestEvent(),
-        createEmailEvent(),
-      ];
+      const events = [createAccountActivityEvent(), createApiRequestEvent(), createEmailEvent()];
 
       for (const event of events) {
         await mockClickHouse.insert({
@@ -373,11 +364,7 @@ describe('Stream Worker', () => {
 
   describe('Metrics Tracking', () => {
     it('should track processed events', async () => {
-      const events = [
-        createAccountActivityEvent(),
-        createApiRequestEvent(),
-        createEmailEvent(),
-      ];
+      const events = [createAccountActivityEvent(), createApiRequestEvent(), createEmailEvent()];
 
       let processedCount = 0;
 
@@ -428,12 +415,7 @@ describe('Stream Worker', () => {
       const index = await mockMeilisearch.getOrCreateIndex('events');
 
       await index.updateSettings({
-        searchableAttributes: [
-          'userId',
-          'sourceIp',
-          'recipientEmail',
-          'path',
-        ],
+        searchableAttributes: ['userId', 'sourceIp', 'recipientEmail', 'path'],
       });
 
       const settings = await index.getSettings();
@@ -445,12 +427,7 @@ describe('Stream Worker', () => {
       const index = await mockMeilisearch.getOrCreateIndex('events');
 
       await index.updateSettings({
-        filterableAttributes: [
-          'type',
-          'timestamp',
-          'success',
-          'action',
-        ],
+        filterableAttributes: ['type', 'timestamp', 'success', 'action'],
       });
 
       const settings = await index.getSettings();

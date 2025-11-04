@@ -1,8 +1,4 @@
-import {
-  MockMeilisearchClient,
-  MockClickHouseClient,
-  waitFor,
-} from '../helpers/mocks';
+import { MockMeilisearchClient, MockClickHouseClient } from '../helpers/mocks';
 import {
   createAccountActivityEvent,
   createApiRequestEvent,
@@ -171,7 +167,7 @@ describe('Search and Analytics Integration', () => {
             country: 'US',
             city: 'New York',
             latitude: 40.7128,
-            longitude: -74.0060,
+            longitude: -74.006,
           },
         }),
         createAccountActivityEvent({
@@ -228,15 +224,15 @@ describe('Search and Analytics Integration', () => {
       const events = [
         createAccountActivityEvent({
           id: 'event-1',
-          timestamp: new Date(now - 3000).toISOString()
+          timestamp: new Date(now - 3000).toISOString(),
         }),
         createAccountActivityEvent({
           id: 'event-2',
-          timestamp: new Date(now - 1000).toISOString()
+          timestamp: new Date(now - 1000).toISOString(),
         }),
         createAccountActivityEvent({
           id: 'event-3',
-          timestamp: new Date(now - 2000).toISOString()
+          timestamp: new Date(now - 2000).toISOString(),
         }),
       ];
 
@@ -337,9 +333,7 @@ describe('Search and Analytics Integration', () => {
   describe('Combined Search and Analytics', () => {
     it('should search and aggregate results', async () => {
       const userId = 'analytics-user-123';
-      const events = Array.from({ length: 30 }, () =>
-        createAccountActivityEvent({ userId })
-      );
+      const events = Array.from({ length: 30 }, () => createAccountActivityEvent({ userId }));
 
       // Index in Meilisearch
       const index = await meilisearch.getIndex('events');
@@ -392,9 +386,7 @@ describe('Search and Analytics Integration', () => {
 
       // Get count from ClickHouse
       const insertedRows = clickhouse.getInsertedRows('events');
-      const apiEventsInDb = insertedRows.filter(
-        (row) => row.values[0].type === 'api_request'
-      );
+      const apiEventsInDb = insertedRows.filter((row) => row.values[0].type === 'api_request');
 
       expect(apiEvents.estimatedTotalHits).toBe(15);
       expect(apiEventsInDb.length).toBe(15);
@@ -451,7 +443,7 @@ describe('Search and Analytics Integration', () => {
 
       // Add new event
       const newEvent = createAccountActivityEvent({
-        userId: 'new-event-user-123'
+        userId: 'new-event-user-123',
       });
       await index.addDocuments([newEvent]);
 
@@ -465,14 +457,14 @@ describe('Search and Analytics Integration', () => {
 
       const event = createAccountActivityEvent({
         id: 'update-test-event',
-        userId: 'original-user'
+        userId: 'original-user',
       });
       await index.addDocuments([event]);
 
       // Update the document
       const updatedEvent = {
         ...event,
-        userId: 'updated-user'
+        userId: 'updated-user',
       };
       await index.updateDocuments([updatedEvent]);
 
@@ -484,7 +476,7 @@ describe('Search and Analytics Integration', () => {
       const index = await meilisearch.getIndex('events');
 
       const event = createAccountActivityEvent({
-        id: 'delete-test-event'
+        id: 'delete-test-event',
       });
       await index.addDocuments([event]);
 
@@ -496,9 +488,7 @@ describe('Search and Analytics Integration', () => {
       await index.deleteDocument('delete-test-event');
 
       // Verify it's gone
-      await expect(
-        index.getDocument('delete-test-event')
-      ).rejects.toThrow('Document not found');
+      await expect(index.getDocument('delete-test-event')).rejects.toThrow('Document not found');
     });
   });
 
@@ -509,7 +499,8 @@ describe('Search and Analytics Integration', () => {
       const index = await meilisearch.getIndex('events');
       const startTime = Date.now();
       await index.addDocuments(events);
-      const indexTime = Date.now() - startTime;
+      // indexing completed; duration not asserted
+      void (Date.now() - startTime);
 
       const searchStart = Date.now();
       const results = await index.search('');
@@ -563,9 +554,9 @@ describe('Search and Analytics Integration', () => {
     });
 
     it('should handle missing index gracefully', async () => {
-      await expect(
-        meilisearch.getIndex('non-existent-index')
-      ).rejects.toThrow('Index non-existent-index not found');
+      await expect(meilisearch.getIndex('non-existent-index')).rejects.toThrow(
+        'Index non-existent-index not found'
+      );
     });
   });
 });

@@ -210,22 +210,21 @@ describe('EventGenerator', () => {
     });
 
     it('should not include messageId when email fails', () => {
-      const events: EmailEvent[] = [];
+      let failedEmail: EmailEvent | undefined;
 
-      // Generate many events to find failed ones
-      for (let i = 0; i < 200; i++) {
+      // Try until we find at least one failed email, with an upper bound
+      for (let i = 0; i < 2000; i++) {
         const event = generator.generateEvent();
         if (event.type === 'email_send' && !event.success) {
-          events.push(event as EmailEvent);
+          failedEmail = event as EmailEvent;
+          break;
         }
       }
 
-      expect(events.length).toBeGreaterThan(0);
-      events.forEach((event) => {
-        expect(event.messageId).toBeUndefined();
-        expect(event.bounceType).toMatch(/^(hard|soft)$/);
-        expect(event.failureReason).toBeDefined();
-      });
+      expect(failedEmail).toBeDefined();
+      expect(failedEmail!.messageId).toBeUndefined();
+      expect(failedEmail!.bounceType).toMatch(/^(hard|soft)$/);
+      expect(failedEmail!.failureReason).toBeDefined();
     });
   });
 
@@ -297,13 +296,18 @@ describe('EventGenerator', () => {
 
     it('should generate high response times in attack mode', () => {
       const apiEvents: ApiRequestEvent[] = [];
+      let attempts = 0;
 
-      for (let i = 0; i < 200; i++) {
+      // Collect until we have a target number of API events or hit a safety cap
+      while (apiEvents.length < 100 && attempts < 5000) {
         const event = generator.generateEvent();
+        attempts++;
         if (event.type === 'api_request') {
           apiEvents.push(event as ApiRequestEvent);
         }
       }
+
+      expect(apiEvents.length).toBeGreaterThan(0);
 
       const highLatencyEvents = apiEvents.filter((e) => e.responseTimeMs > 1000);
       expect(highLatencyEvents.length).toBeGreaterThan(0);

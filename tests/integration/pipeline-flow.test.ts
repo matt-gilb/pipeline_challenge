@@ -3,8 +3,6 @@ import {
   MockKafkaConsumer,
   MockClickHouseClient,
   MockMeilisearchClient,
-  waitFor,
-  waitForCondition,
 } from '../helpers/mocks';
 import { EventGenerator } from '../../apps/event-generator/src/generator';
 import { validateEvent } from '@pipeline/shared';
@@ -318,9 +316,7 @@ describe('Pipeline Integration Tests', () => {
       expect(insertedRows).toHaveLength(25);
 
       // Check for suspicious patterns
-      const userEvents = insertedRows.filter(
-        (row) => row.values[0].userId === suspiciousUserId
-      );
+      const userEvents = insertedRows.filter((row) => row.values[0].userId === suspiciousUserId);
       expect(userEvents.length).toBeGreaterThan(20);
     });
 
