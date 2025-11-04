@@ -1,3 +1,5 @@
+export {};
+
 // Mock environment variables for tests
 process.env.KAFKA_BROKERS = 'localhost:9092';
 process.env.CLICKHOUSE_HOST = 'localhost';

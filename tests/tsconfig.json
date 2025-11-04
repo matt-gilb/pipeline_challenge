@@ -26,7 +26,7 @@
       "@/*": ["../apps/web/src/*"]
     }
   },
-  "include": ["**/*.ts", "../apps/**/*.ts", "../packages/**/*.ts"],
+  "include": ["**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
