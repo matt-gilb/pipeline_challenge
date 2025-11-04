@@ -19,18 +19,14 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["jest", "node"],
+    "types": ["jest", "@jest/globals", "node"],
     "baseUrl": ".",
     "paths": {
       "@pipeline/shared": ["../packages/shared/src/index.ts"],
       "@/*": ["../apps/web/src/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "../apps/**/*.ts",
-    "../packages/**/*.ts"
-  ],
+  "include": ["**/*.ts", "../apps/**/*.ts", "../packages/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",

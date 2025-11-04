@@ -1,6 +1,3 @@
-import { jest } from '@jest/globals';
-import { Event } from '@pipeline/shared';
-
 /**
  * Mock Kafka Producer
  */
