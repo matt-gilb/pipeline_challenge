@@ -1,4 +1,3 @@
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import {
   MockClickHouseClient,
@@ -43,13 +42,7 @@ describe('Web API Endpoints', () => {
   describe('Metrics API', () => {
     describe('Query Parameter Validation', () => {
       it('should validate correct timeRange format', () => {
-        const validTimeRanges = [
-          '1 MINUTE',
-          '5 MINUTE',
-          '1 HOUR',
-          '24 HOUR',
-          '7 DAY',
-        ];
+        const validTimeRanges = ['1 MINUTE', '5 MINUTE', '1 HOUR', '24 HOUR', '7 DAY'];
 
         const QuerySchema = z.object({
           timeRange: z.string().regex(/^\d+\s+(MINUTE|HOUR|DAY)$/i),
@@ -62,13 +55,7 @@ describe('Web API Endpoints', () => {
       });
 
       it('should reject invalid timeRange format', () => {
-        const invalidTimeRanges = [
-          'invalid',
-          '1',
-          'MINUTE',
-          '1 SECOND',
-          '1MINUTE',
-        ];
+        const invalidTimeRanges = ['invalid', '1', 'MINUTE', '1 SECOND', '1MINUTE'];
 
         const QuerySchema = z.object({
           timeRange: z.string().regex(/^\d+\s+(MINUTE|HOUR|DAY)$/i),
@@ -369,11 +356,7 @@ describe('Web API Endpoints', () => {
       it('should apply filters', async () => {
         const index = await mockMeilisearch.getIndex('events');
 
-        const events = [
-          createAccountActivityEvent(),
-          createApiRequestEvent(),
-          SAMPLE_EMAIL_EVENT,
-        ];
+        const events = [createAccountActivityEvent(), createApiRequestEvent(), SAMPLE_EMAIL_EVENT];
 
         await index.addDocuments(events);
 
@@ -445,9 +428,7 @@ describe('Web API Endpoints', () => {
       it('should throw error for non-existent document', async () => {
         const index = await mockMeilisearch.getIndex('events');
 
-        await expect(
-          index.getDocument('non-existent-id')
-        ).rejects.toThrow('Document not found');
+        await expect(index.getDocument('non-existent-id')).rejects.toThrow('Document not found');
       });
     });
 
@@ -502,9 +483,9 @@ describe('Web API Endpoints', () => {
     });
 
     it('should handle Meilisearch index errors', async () => {
-      await expect(
-        mockMeilisearch.getIndex('non-existent-index')
-      ).rejects.toThrow('Index non-existent-index not found');
+      await expect(mockMeilisearch.getIndex('non-existent-index')).rejects.toThrow(
+        'Index non-existent-index not found'
+      );
     });
   });
 
