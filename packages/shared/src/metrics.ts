@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import type { EventType } from './events';
 
 // 1-minute and 1-hour rollup metrics (shared schema)
 export const RollupMetricsSchema = z.object({

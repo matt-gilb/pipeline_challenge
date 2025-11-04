@@ -1,4 +1,4 @@
-![CI](https://github.com/matt-gilbert/pipeline_challenge/workflows/CI/badge.svg)
+[![CI](https://github.com/matt-gilb/pipeline_challenge/actions/workflows/ci.yml/badge.svg)](https://github.com/matt-gilb/pipeline_challenge/actions/workflows/ci.yml)
 
 # Demo Data Pipeline
 
