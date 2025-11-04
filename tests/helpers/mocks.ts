@@ -214,17 +214,98 @@ export class MockMeilisearchIndex {
   ) {
     const docs = Array.from(this.documents.values());
 
-    // Simple filtering logic
+    // Text search
     let filtered = docs;
     if (query) {
-      filtered = docs.filter((doc) =>
-        JSON.stringify(doc).toLowerCase().includes(query.toLowerCase())
-      );
+      const q = query.toLowerCase();
+      filtered = filtered.filter((doc) => JSON.stringify(doc).toLowerCase().includes(q));
     }
 
-    // Apply limit and offset
-    const limit = options?.limit || 20;
-    const offset = options?.offset || 0;
+    // Helper to get nested value by path (e.g., "geoLocation.country")
+    const getValue = (obj: any, path: string) =>
+      path.split('.').reduce((acc: any, key: string) => (acc != null ? acc[key] : undefined), obj);
+
+    // Apply filters (basic parser for expressions like "field = value", "statusCode >= 400")
+    const rawFilters = options?.filter;
+    const filters = Array.isArray(rawFilters) ? rawFilters : rawFilters ? [rawFilters] : [];
+
+    const applyFilter = (doc: any, expr: string): boolean => {
+      const match = expr.match(/^\s*([A-Za-z0-9_.]+)\s*(=|!=|>=|<=|>|<)\s*(.+?)\s*$/);
+      if (!match) return true; // ignore unrecognized filters
+      const [, field, op, raw] = match;
+
+      // Normalize value
+      const unquoted = raw.replace(/^['"]|['"]$/g, '');
+      let rhs: any = unquoted;
+      if (/^(true|false)$/i.test(unquoted)) {
+        rhs = unquoted.toLowerCase() === 'true';
+      } else if (!isNaN(Number(unquoted))) {
+        rhs = Number(unquoted);
+      }
+
+      const lhs = getValue(doc, field);
+
+      // Coerce for numeric comparisons when possible
+      const toNumber = (v: any) => (typeof v === 'number' ? v : Number(v));
+      const isNumericOp = op !== '=' && op !== '!=';
+      if (isNumericOp) {
+        const ln = toNumber(lhs);
+        const rn = toNumber(rhs);
+        if (Number.isNaN(ln) || Number.isNaN(rn)) return false;
+        switch (op) {
+          case '>':
+            return ln > rn;
+          case '>=':
+            return ln >= rn;
+          case '<':
+            return ln < rn;
+          case '<=':
+            return ln <= rn;
+          default:
+            return false;
+        }
+      } else {
+        // Equality comparisons
+        return op === '=' ? lhs === rhs : lhs !== rhs;
+      }
+    };
+
+    if (filters.length > 0) {
+      filtered = filtered.filter((doc) => filters.every((f) => applyFilter(doc, f)));
+    }
+
+    // Apply sorting (e.g., ["timestamp:desc"] or ["responseTimeMs:asc"])
+    const sorts = options?.sort || [];
+    if (sorts.length > 0) {
+      const [fieldSpec] = sorts;
+      const [fieldPath, dirRaw] = fieldSpec.split(':');
+      const dir = (dirRaw || 'asc').toLowerCase() === 'desc' ? -1 : 1;
+
+      const getComparable = (v: any) => {
+        // If it's an ISO timestamp string, compare by time value
+        if (typeof v === 'string' && /\d{4}-\d{2}-\d{2}T/.test(v)) {
+          const t = Date.parse(v);
+          return Number.isNaN(t) ? v : t;
+        }
+        return v;
+      };
+
+      filtered = [...filtered].sort((a, b) => {
+        const av = getComparable(getValue(a, fieldPath));
+        const bv = getComparable(getValue(b, fieldPath));
+        if (av == null && bv == null) return 0;
+        if (av == null) return -1 * dir;
+        if (bv == null) return 1 * dir;
+        if (av < bv) return -1 * dir;
+        if (av > bv) return 1 * dir;
+        return 0;
+      });
+    }
+
+    // Apply pagination
+    const limit = options?.limit ?? 20;
+    const offset = options?.offset ?? 0;
+    const total = filtered.length;
     const paginated = filtered.slice(offset, offset + limit);
 
     return {
@@ -233,7 +314,7 @@ export class MockMeilisearchIndex {
       processingTimeMs: 1,
       limit,
       offset,
-      estimatedTotalHits: filtered.length,
+      estimatedTotalHits: total,
     };
   }
 

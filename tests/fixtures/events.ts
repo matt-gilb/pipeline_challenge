@@ -1,4 +1,5 @@
 import { Event, AccountActivityEvent, ApiRequestEvent, EmailEvent } from '@pipeline/shared';
+import { faker } from '@faker-js/faker';
 
 /**
  * Sample base event data
@@ -127,7 +128,7 @@ export function createAccountActivityEvent(
   return {
     ...SAMPLE_ACCOUNT_ACTIVITY_EVENT,
     ...overrides,
-    id: overrides?.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides?.id || faker.string.uuid(),
     timestamp: overrides?.timestamp || new Date().toISOString(),
   };
 }
@@ -135,13 +136,11 @@ export function createAccountActivityEvent(
 /**
  * Factory function to create a custom API request event
  */
-export function createApiRequestEvent(
-  overrides?: Partial<ApiRequestEvent>
-): ApiRequestEvent {
+export function createApiRequestEvent(overrides?: Partial<ApiRequestEvent>): ApiRequestEvent {
   return {
     ...SAMPLE_API_REQUEST_EVENT,
     ...overrides,
-    id: overrides?.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides?.id || faker.string.uuid(),
     timestamp: overrides?.timestamp || new Date().toISOString(),
   };
 }
@@ -153,7 +152,7 @@ export function createEmailEvent(overrides?: Partial<EmailEvent>): EmailEvent {
   return {
     ...SAMPLE_EMAIL_EVENT,
     ...overrides,
-    id: overrides?.id || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides?.id || faker.string.uuid(),
     timestamp: overrides?.timestamp || new Date().toISOString(),
   };
 }
@@ -161,11 +160,14 @@ export function createEmailEvent(overrides?: Partial<EmailEvent>): EmailEvent {
 /**
  * Generate multiple events of a specific type
  */
-export function generateMultipleEvents(count: number, type: 'account_activity' | 'api_request' | 'email_send'): Event[] {
+export function generateMultipleEvents(
+  count: number,
+  type: 'account_activity' | 'api_request' | 'email_send'
+): Event[] {
   const events: Event[] = [];
   for (let i = 0; i < count; i++) {
     const timestamp = new Date(Date.now() - i * 1000).toISOString();
-    const id = `${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = faker.string.uuid();
 
     switch (type) {
       case 'account_activity':
@@ -185,19 +187,25 @@ export function generateMultipleEvents(count: number, type: 'account_activity' |
 /**
  * Generate events with suspicious patterns
  */
-export function generateSuspiciousEvents(count: number, userId: string, sourceIp: string): AccountActivityEvent[] {
+export function generateSuspiciousEvents(
+  count: number,
+  userId: string,
+  sourceIp: string
+): AccountActivityEvent[] {
   const events: AccountActivityEvent[] = [];
   const baseTime = Date.now();
 
   for (let i = 0; i < count; i++) {
-    events.push(createAccountActivityEvent({
-      id: `suspicious-${i}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date(baseTime - i * 100).toISOString(), // 100ms apart
-      userId,
-      sourceIp,
-      action: i % 3 === 0 ? 'login' : 'password_change',
-      success: i % 4 !== 0, // 25% failure rate
-    }));
+    events.push(
+      createAccountActivityEvent({
+        id: faker.string.uuid(),
+        timestamp: new Date(baseTime - i * 100).toISOString(), // 100ms apart
+        userId,
+        sourceIp,
+        action: i % 3 === 0 ? 'login' : 'password_change',
+        success: i % 4 !== 0, // 25% failure rate
+      })
+    );
   }
 
   return events;
@@ -206,12 +214,15 @@ export function generateSuspiciousEvents(count: number, userId: string, sourceIp
 /**
  * Generate events with different geo locations
  */
-export function generateGeoDistributedEvents(count: number, userId: string): AccountActivityEvent[] {
+export function generateGeoDistributedEvents(
+  count: number,
+  userId: string
+): AccountActivityEvent[] {
   const locations = [
-    { country: 'US', city: 'New York', latitude: 40.7128, longitude: -74.0060 },
+    { country: 'US', city: 'New York', latitude: 40.7128, longitude: -74.006 },
     { country: 'GB', city: 'London', latitude: 51.5074, longitude: -0.1278 },
     { country: 'JP', city: 'Tokyo', latitude: 35.6762, longitude: 139.6503 },
-    { country: 'DE', city: 'Berlin', latitude: 52.5200, longitude: 13.4050 },
+    { country: 'DE', city: 'Berlin', latitude: 52.52, longitude: 13.405 },
     { country: 'AU', city: 'Sydney', latitude: -33.8688, longitude: 151.2093 },
   ];
 
@@ -219,12 +230,14 @@ export function generateGeoDistributedEvents(count: number, userId: string): Acc
 
   for (let i = 0; i < count; i++) {
     const location = locations[i % locations.length];
-    events.push(createAccountActivityEvent({
-      id: `geo-${i}-${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date(Date.now() - i * 1000).toISOString(),
-      userId,
-      geoLocation: location,
-    }));
+    events.push(
+      createAccountActivityEvent({
+        id: faker.string.uuid(),
+        timestamp: new Date(Date.now() - i * 1000).toISOString(),
+        userId,
+        geoLocation: location,
+      })
+    );
   }
 
   return events;

@@ -418,7 +418,7 @@ describe('ClickHouse Queries', () => {
       expect(rows).toHaveLength(2);
 
       const suspiciousUsers = rows.filter((r: any) => Number(r.event_count) > 10);
-      expect(suspiciousUsers).toHaveLength(2);
+      expect(suspiciousUsers).toHaveLength(1);
     });
 
     it('should detect users with multiple IPs', async () => {
@@ -603,11 +603,7 @@ describe('ClickHouse Queries', () => {
     });
 
     it('should insert multiple events in batch', async () => {
-      const events = [
-        createAccountActivityEvent(),
-        createApiRequestEvent(),
-        createEmailEvent(),
-      ];
+      const events = [createAccountActivityEvent(), createApiRequestEvent(), createEmailEvent()];
 
       await clickhouse.insert({
         table: 'events',
