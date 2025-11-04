@@ -16,7 +16,7 @@ The application provides two distinct interfaces for different audiences:
   - **Pipeline Health & System Status**: Monitor event ingestion rates, processing lag, data quality scores, and service health
   - **Business Metrics & Attack Detection**: Track failure rates, response times, error distributions, and automated attack indicators
 
-### Attack Mode
+### Attack Mode (simulated)
 
 In our event-generator, a simulated attack mode is automatially toggled every 5 minutes. There's a 20% chance of entering attack mode each interval. When activated, it logs "Entering attack mode...". This happens continously while event-generator is running.
 
